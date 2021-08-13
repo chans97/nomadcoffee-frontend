@@ -1,23 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import { useReactiveVar } from "@apollo/client";
+import { ThemeProvider } from "styled-components";
+
+import { darkModeVar, isloggedInVar } from "./apollo";
+import Home from "./Home";
+import Login from "./Login";
+import { darkTheme, GlobalStyles, lightTheme } from "./styles";
+const { Switch, BrowserRouter, Route } = require("react-router-dom");
 
 function App() {
+  const isLoggedIn = useReactiveVar(isloggedInVar);
+  const darkMode = useReactiveVar(darkModeVar);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+        <GlobalStyles />
+        <BrowserRouter>
+          <Switch>
+            <Route path="/" exact>
+              {isLoggedIn ? <Home></Home> : <Login></Login>}
+            </Route>
+            <Route path="/profile">profile</Route>
+            <Route>404</Route>
+          </Switch>
+        </BrowserRouter>
+      </ThemeProvider>
     </div>
   );
 }
